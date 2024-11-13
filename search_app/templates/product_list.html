@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -11,16 +12,21 @@
     <link rel="stylesheet" href="{% static 'styles/style.css' %}">
 </head>
 <body>
-    {% load humanize %}
     <div class="container mt-5">
         <h1 class="text-center mb-4">商品一覧</h1>
         <!-- 商品リスト -->
         <ul class="list-group">
             {% for product in products %}
-                <li class="list-group-item d-flex justify-content-between align-items-center"> 
-                    <div>
-                        <h5>{{ product.name }}</h5>
-                        <p>{{ product.price|floatformat:0 }}円</p>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <!-- 商品画像の表示 -->
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-thumbnail me-3" style="width: 100px; height: 100px;">
+                        {% endif %}
+                        <div>
+                            <h5>{{ product.name }}</h5>
+                            <p>{{ product.price|floatformat:0|intcomma }}円</p>
+                        </div>
                     </div>
                     <div>
                         <!-- 編集ボタン -->

@@ -26,6 +26,12 @@
                         <p class="card-text">
                             <strong>{{ product.price|floatformat:0|intcomma }}円</strong>
                         </p>
+                        <!-- 商品画像表示部分 -->
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid mb-3">
+                        {% else %}
+                            <p>画像はありません。</p>
+                        {% endif %}
                         <!-- ボタンの配置 -->
                         <div class="d-flex justify-content-between mt-4">
                             <a href="{% url 'product_update' product.pk %}" class="btn btn-secondary">編集</a>

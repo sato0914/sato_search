@@ -1,3 +1,10 @@
+// 折りたたみヘッダーのトグル
+document.getElementById("headerToggle").onclick = function() {
+    var headerContent = document.getElementById("headerContent");
+    headerContent.style.display = headerContent.style.display === "none" ? "block" : "none";
+};
+
+// 既存の検索フォーム処理
 document.getElementById('searchForm').addEventListener('submit', function(e) {
     e.preventDefault(); // デフォルトのフォーム送信をキャンセル
 

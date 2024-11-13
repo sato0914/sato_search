@@ -24,17 +24,13 @@ import re
 @login_required
 def product_create(request):
     if request.method == 'POST':
-        form = ProductForm(request.POST)
+        form = ProductForm(request.POST, request.FILES)  # request.FILESを追加
         if form.is_valid():
             form.save()
             return redirect('product_list')
     else:
         form = ProductForm()
     return render(request, 'product_form.html', {'form': form})
-
-def product_detail(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    return render(request, 'product_detail.html', {'product': product})
 
 @login_required
 def product_update(request, pk):
@@ -44,13 +40,17 @@ def product_update(request, pk):
         return HttpResponseForbidden("あなたの追加した商品ではありません。")
 
     if request.method == 'POST':
-        form = ProductForm(request.POST, instance=product)
+        form = ProductForm(request.POST, request.FILES, instance=product)  # request.FILESを追加
         if form.is_valid():
             form.save()
             return redirect('product_detail', pk=product.pk)
     else:
-        form = ProductForm(instance=product) # product オブジェクトをテンプレートに渡す
+        form = ProductForm(instance=product)
     return render(request, 'product_form.html', {'form': form, 'product': product})
+
+def product_detail(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    return render(request, 'product_detail.html', {'product': product})
 
 @login_required
 def product_delete(request, pk):

@@ -13,18 +13,22 @@
 </head>
 <body>
     <h1>商品検索</h1>
-    {% if user.is_authenticated %}
-        <a href="{% url 'logout' %}" class="btn btn-danger">ログアウト</a>
-    {% else %}
-        <a href="{% url 'login' %}" class="btn btn-primary">ログイン</a>
-        <a href="{% url 'register' %}" class="btn btn-success">新規登録</a>
-    {% endif %}
-    <!-- 新規商品追加ボタン -->
-    <a href="{% url 'product_create' %}" class="btn btn-success mb-4">新規商品を追加</a>
-    <a href="{% url 'product_list' %}" class="btn btn-success mb-4">商品一覧</a>
-    <a href="{% url 'search_view' %}" class="btn btn-success mb-4">検索画面Top</a>
-    <a href="{% url 'search_history_list' %}" class="btn btn-success mb-4">検索履歴</a>
-
+    <!-- 折りたたみ可能なヘッダー -->
+    <div class="header">
+        <button id="headerToggle" class="btn btn-primary">メニュー</button>
+        <div id="headerContent" style="display: none;">
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}" class="btn btn-danger">ログアウト</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-primary">ログイン</a>
+                <a href="{% url 'register' %}" class="btn btn-success">新規登録</a>
+            {% endif %}
+            <a href="{% url 'product_create' %}" class="btn btn-success mb-4">新規商品を追加</a>
+            <a href="{% url 'product_list' %}" class="btn btn-success mb-4">商品一覧</a>
+            <a href="{% url 'search_view' %}" class="btn btn-success mb-4">検索画面Top</a>
+            <a href="{% url 'search_history_list' %}" class="btn btn-success mb-4">検索履歴</a>
+        </div>
+    </div>
     <!-- 検索フォーム -->
     <form method="get" action="{% url 'search_view' %}">
         <label for="query">検索キーワード:</label>
@@ -62,11 +66,16 @@
         </select>
         <button type="submit" class="btn btn-primary">検索</button>
     </form>    
-    <!-- 商品リスト (通常検索の結果表示) -->
+
+    <!-- 商品リスト -->
     <ul id="product-list" class="list-group">
         {% for product in page_obj.object_list %}
             <li class="list-group-item">
-                {{ product.name }} - {{ product.price|floatformat:0 }}円
+                <h3>{{ product.name }}</h3>
+                <p>{{ product.price|floatformat:0 }}円</p>
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100px; height: auto;">
+                {% endif %}
                 <a href="{% url 'product_detail' product.id %}" class="btn btn-warning">詳細</a>
                 <a href="{% url 'product_delete' product.id %}" class="btn btn-danger">削除</a>
             </li>
@@ -74,10 +83,12 @@
             <li class="list-group-item">結果が見つかりませんでした。</li>
         {% endfor %}
     </ul>
-    <!-- リアルタイム検索結果 (通常検索の結果が表示されていないときのみ表示) -->
+    <!-- リアルタイム検索結果 -->
     <ul id="searchResults" class="list-group" style="display:none;"></ul>
+    
     <!-- 検索結果の件数表示 -->
     <p>該当する商品数: {{ result_count }} 件</p>
+
     <!-- おすすめ商品セクション -->
     {% if related_products %}
         <h2>おすすめ商品</h2>
@@ -107,6 +118,7 @@
             {% endif %}
         </span>
     </div>  
+    <!-- 言語変更フォーム -->
     <form method="post" action="{% url 'set_language' %}">
         {% csrf_token %}
         <select name="language">
@@ -115,7 +127,7 @@
         </select>
         <button type="submit">{% trans "Change Language" %}</button>
     </form>  
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script src="{% static 'js/app.js' %}"></script>
 </body>
 <footer><small>© 2024 Sato Ribeka</small></footer>
