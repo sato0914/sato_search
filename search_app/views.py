@@ -7,10 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.paginator import Paginator
-from django.core.cache import cache
 from django.db.models import Q, Min, Max
 from django.utils import timezone
-from rest_framework import viewsets
+from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -230,7 +229,18 @@ class ProductSearchAPI(APIView):
         # シリアライズして返す
         serializer = ProductSerializer(results, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class ProductSerializer(serializers.ModelSerializer):
+    # Decimalフィールドを文字列として返すためにDecimalFieldを使用
+    price = serializers.DecimalField(max_digits=10, decimal_places=2)
     
+    # カテゴリの名前もシリアライズ
+    category = serializers.StringRelatedField()
+
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'price', 'description', 'category']
+
 def register(request):
     if request.method == 'POST':
         username = request.POST['username']
