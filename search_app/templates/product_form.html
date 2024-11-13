@@ -17,7 +17,7 @@
             <div class="col-md-6">
                 <h2 class="text-center mb-4">商品{% if product.id %}編集{% else %}作成{% endif %}</h2>
                 <!-- 商品フォーム -->
-                <form method="POST" class="bg-light p-4 rounded shadow-sm">
+                <form method="POST" class="bg-light p-4 rounded shadow-sm" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form.as_p }}
                     <div class="d-flex justify-content-between mt-3">
