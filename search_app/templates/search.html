@@ -1,0 +1,122 @@
+{% load static %}
+{% load humanize %}
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>商品検索</title>
+</head>
+<body>
+    <h1>商品検索</h1>
+    {% if user.is_authenticated %}
+        <a href="{% url 'logout' %}" class="btn btn-danger">ログアウト</a>
+    {% else %}
+        <a href="{% url 'login' %}" class="btn btn-primary">ログイン</a>
+        <a href="{% url 'register' %}" class="btn btn-success">新規登録</a>
+    {% endif %}
+    <!-- 新規商品追加ボタン -->
+    <a href="{% url 'product_create' %}" class="btn btn-success mb-4">新規商品を追加</a>
+    <a href="{% url 'product_list' %}" class="btn btn-success mb-4">商品一覧</a>
+    <a href="{% url 'search_view' %}" class="btn btn-success mb-4">検索画面Top</a>
+    <a href="{% url 'search_history_list' %}" class="btn btn-success mb-4">検索履歴</a>
+
+    <!-- 検索フォーム -->
+    <form method="get" action="{% url 'search_view' %}">
+        <label for="query">検索キーワード:</label>
+        <input type="text" name="query" placeholder="検索キーワード" list="history" id="query">
+        <datalist id="history">
+            {% for history in search_history %}
+                <option value="{{ history.query }}">{{ history.query }}</option>
+            {% endfor %}
+        </datalist>
+        <!-- カテゴリの選択 -->
+        <label for="category">カテゴリ:</label>
+        <select name="category" id="category">
+            <option value="">すべて</option>
+            {% for category in categories %}
+                <option value="{{ category.name }}" {% if request.GET.category == category.name %}selected{% endif %}>
+                    {{ category.name }}
+                </option>
+            {% endfor %}
+        </select>
+        <!-- 価格範囲の入力 -->
+        <div>
+            <label for="min_price">最低価格:</label>
+            <input type="number" name="min_price" min="0" id="min_price" value="{{ request.GET.min_price }}">
+        </div>
+        <div>
+            <label for="max_price">最高価格:</label>
+            <input type="number" name="max_price" min="0" id="max_price" value="{{ request.GET.max_price }}">
+        </div>
+        <!-- 並び替えの選択 -->
+        <label for="sort">並び替え:</label>
+        <select name="sort" id="sort">
+            <option value="name" {% if request.GET.sort == "name" %}selected{% endif %}>名前順</option>
+            <option value="price_asc" {% if request.GET.sort == "price_asc" %}selected{% endif %}>価格が安い順</option>
+            <option value="price_desc" {% if request.GET.sort == "price_desc" %}selected{% endif %}>価格が高い順</option>
+        </select>
+        <button type="submit" class="btn btn-primary">検索</button>
+    </form>    
+    <!-- 商品リスト (通常検索の結果表示) -->
+    <ul id="product-list" class="list-group">
+        {% for product in page_obj.object_list %}
+            <li class="list-group-item">
+                {{ product.name }} - {{ product.price|floatformat:0 }}円
+                <a href="{% url 'product_detail' product.id %}" class="btn btn-warning">詳細</a>
+                <a href="{% url 'product_delete' product.id %}" class="btn btn-danger">削除</a>
+            </li>
+        {% empty %}
+            <li class="list-group-item">結果が見つかりませんでした。</li>
+        {% endfor %}
+    </ul>
+    <!-- リアルタイム検索結果 (通常検索の結果が表示されていないときのみ表示) -->
+    <ul id="searchResults" class="list-group" style="display:none;"></ul>
+    <!-- 検索結果の件数表示 -->
+    <p>該当する商品数: {{ result_count }} 件</p>
+    <!-- おすすめ商品セクション -->
+    {% if related_products %}
+        <h2>おすすめ商品</h2>
+        <ul id="related-products" class="list-group">
+            {% for product in related_products %}
+                <li class="list-group-item">
+                    {{ product.name }} - {{ product.price|floatformat:0 }}円
+                    <a href="{% url 'product_detail' product.id %}" class="btn btn-info">詳細を見る</a>
+                </li>
+            {% empty %}
+                <li class="list-group-item">おすすめの商品はありません。</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <!-- ページネーション -->
+    <div class="pagination mt-4">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1&category={{ request.GET.category }}&sort={{ request.GET.sort }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">最初</a>
+                <a href="?page={{ page_obj.previous_page_number }}&category={{ request.GET.category }}&sort={{ request.GET.sort }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">前へ</a>
+            {% endif %}
+            <span>ページ {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&category={{ request.GET.category }}&sort={{ request.GET.sort }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">次へ</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&category={{ request.GET.category }}&sort={{ request.GET.sort }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">最後</a>
+            {% endif %}
+        </span>
+    </div>  
+    <form method="post" action="{% url 'set_language' %}">
+        {% csrf_token %}
+        <select name="language">
+            <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>
+            <option value="ja" {% if LANGUAGE_CODE == 'ja' %}selected{% endif %}>日本語</option>
+        </select>
+        <button type="submit">{% trans "Change Language" %}</button>
+    </form>  
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/app.js' %}"></script>
+</body>
+<footer><small>© 2024 Sato Ribeka</small></footer>
+</html>
