@@ -54,6 +54,7 @@
                 {% if product.image %}
                     <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100px; height: auto;">
                 {% endif %}
+                <p>いいね: {{ product.like_set.count }}</p>
                 <a href="{% url 'product_detail' product.id %}" class="btn btn-primary btn-sm">詳細</a>
                 <a href="{% url 'product_delete' product.id %}" class="btn btn-danger btn-sm">削除</a>
             </li>

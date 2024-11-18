@@ -20,6 +20,17 @@
                 {% else %}
                     <p>画像はありません。</p>
                 {% endif %}
+                {% if user.is_authenticated %}
+                    <form action="{% url 'like_product' product.id %}" method="post">
+                        {% csrf_token %}
+                        {% if product.likes.filter(user=user).exists %}
+                            <button type="submit">アンライク</button>
+                        {% else %}
+                            <button type="submit">いいね</button>
+                        {% endif %}
+                    </form>
+                {% endif %}
+                <p>いいね: {{ product.like_set.count }}</p>
                 <!-- ボタンの配置 -->
                 <div class="d-flex justify-content-between mt-4">
                     <a href="{% url 'product_update' product.pk %}" class="btn btn-secondary">編集</a>

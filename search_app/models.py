@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from django.conf import settings
 
 class Category(models.Model):
     name = models.CharField(max_length=255, verbose_name=_("Category Name"))
@@ -41,3 +40,14 @@ class SearchHistory(models.Model):
 
     def __str__(self):
         return f"{self.query} - {self.timestamp}"
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'product')  # 同じ商品に対する同一ユーザーの重複いいねを防ぐ
+
+    def __str__(self):
+        return f"{self.user.username} likes {self.product.name}"

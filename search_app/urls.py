@@ -15,4 +15,5 @@ urlpatterns = [
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
     path('set_language/', views.set_language_view, name='set_language'),
+    path('product/<int:product_id>/like/', views.like_product, name='like_product'),
 ]

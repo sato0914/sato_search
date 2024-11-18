@@ -13,14 +13,12 @@ from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product, Category, SearchHistory
+from .models import Product, Category, SearchHistory, Like
 from .forms import ProductForm, SearchForm
 from .serializers import ProductSerializer
 from decimal import Decimal, InvalidOperation
 from django.utils.translation import activate
 from django.urls import reverse
-import logging
-import re
 
 @login_required
 def product_create(request):
@@ -115,7 +113,6 @@ def search_view(request):
                 sort=sort_by
             )
 
-
     # 最近の検索履歴を取得
     recent_history = []
     if request.user.is_authenticated:
@@ -155,7 +152,6 @@ def search_view(request):
     # 価格が空の場合、Noneに設定
     min_price = min_price if min_price else None
     max_price = max_price if max_price else None
-
 
     # min_priceとmax_priceが空でない場合のみ変換
     if min_price and min_price != "":
@@ -327,3 +323,16 @@ def set_language_view(request):
         request.session['language'] = language  # セッションに言語を保存
     print(request.session.get('language'))  # セッションに保存されている言語を確認
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('search_view')))
+
+@login_required
+def like_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    # すでにいいねされているか確認
+    like, created = Like.objects.get_or_create(user=request.user, product=product)
+
+    if not created:
+        # すでにいいねされている場合は、それを削除（アンライク）
+        like.delete()
+
+    return redirect('product_detail', product_id=product.id)  # 詳細ページへリダイレクト
