@@ -16,7 +16,7 @@ from rest_framework import status
 from .models import Product, Category, SearchHistory
 from .forms import ProductForm, SearchForm
 from .serializers import ProductSerializer
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from django.utils.translation import activate
 from django.urls import reverse
 import re
@@ -105,16 +105,25 @@ def search_view(request):
             existing_history.timestamp = timezone.now()
             existing_history.save()
         else:
-            SearchHistory.objects.create(user=request.user, query=query)
+            SearchHistory.objects.create(
+                user=request.user,
+                query=query,
+                category=category_name,
+                min_price=min_price,
+                max_price=max_price,
+                sort=sort_by
+            )
 
     # 最近の検索履歴を取得
     recent_history = []
     if request.user.is_authenticated:
-        # 最新30件の履歴を取得
         recent_history = SearchHistory.objects.filter(user=request.user).order_by('-timestamp')[:30]
 
     # 検索履歴を整形
-    cleaned_history = [re.sub(r'\(.*?\)', '', history.query).strip() for history in recent_history]
+    cleaned_history = [
+        re.sub(r'\(.*?\)', '', history.query).strip()  # 括弧内の文字列を削除し、前後の空白を取り除く
+        for history in recent_history
+    ]
 
     # 検索処理
     if query:
@@ -132,13 +141,18 @@ def search_view(request):
         except Category.DoesNotExist:
             results = results.none()
 
-    # 価格フィルタリング
     if min_price:
-        min_price = Decimal(min_price)
-        results = results.filter(price__gte=min_price)
+        try:
+            min_price = Decimal(min_price)
+            results = results.filter(price__gte=min_price)
+        except InvalidOperation:
+            min_price = None
     if max_price:
-        max_price = Decimal(max_price)
-        results = results.filter(price__lte=max_price)
+        try:
+            max_price = Decimal(max_price)
+            results = results.filter(price__lte=max_price)
+        except InvalidOperation:
+            max_price = None
 
     # 並び替え
     if sort_by == 'price_asc':

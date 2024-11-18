@@ -7,7 +7,23 @@ class SearchForm(forms.Form):
         max_length=100,
         required=False,
         widget=forms.TextInput(attrs={'placeholder': '検索したいキーワードを入力'})
-)
+    )
+    min_price = forms.DecimalField(
+        label='最低価格',
+        required=False,
+        min_value=0,
+        max_digits=10,
+        decimal_places=2,
+        widget=forms.NumberInput(attrs={'placeholder': '最低価格を入力'})
+    )
+    max_price = forms.DecimalField(
+        label='最高価格',
+        required=False,
+        min_value=0,
+        max_digits=10,
+        decimal_places=2,
+        widget=forms.NumberInput(attrs={'placeholder': '最高価格を入力'})
+    )
 
 class ProductForm(forms.ModelForm):
     class Meta:

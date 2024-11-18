@@ -31,17 +31,13 @@ class Product(models.Model):
         verbose_name_plural = _("Products")
 
 class SearchHistory(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_("User"))
-    query = models.CharField(max_length=255, verbose_name=_("Search Query"))
-    category = models.CharField(max_length=255, null=True, blank=True, verbose_name=_("Category"))
-    min_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name=_("Min Price"))
-    max_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name=_("Max Price"))
-    sort = models.CharField(max_length=50, null=True, blank=True, verbose_name=_("Sort Order"))
-    timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Timestamp"))
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    query = models.CharField(max_length=100)
+    category = models.CharField(max_length=100, blank=True, null=True)
+    min_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    max_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    sort = models.CharField(max_length=50, blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username}: {self.query} at {self.timestamp}"
-
-    class Meta:
-        verbose_name = _("Search History")
-        verbose_name_plural = _("Search Histories")
+        return f"{self.query} - {self.timestamp}"
