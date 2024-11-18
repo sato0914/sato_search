@@ -9,7 +9,7 @@
 <div class="search-form-container">
     <form method="get" action="{% url 'search_view' %}">
         <label for="query">検索キーワード:</label>
-        <input type="text" name="query" placeholder="検索キーワード" list="history" id="query">
+        <input type="text" name="query" placeholder="検索キーワード" list="history" id="query" value="{{ request.GET.query }}">
         <datalist id="history">
             {% for history in search_history %}
                 <option value="{{ history.query }}">{{ history.query }}</option>
@@ -24,7 +24,7 @@
                     {{ category.name }}
                 </option>
             {% endfor %}
-        </select>
+        </select>        
         <!-- 価格範囲の入力 -->
         <div>
             <label for="min_price">最低価格:</label>
@@ -40,7 +40,7 @@
             <option value="name" {% if request.GET.sort == "name" %}selected{% endif %}>名前順</option>
             <option value="price_asc" {% if request.GET.sort == "price_asc" %}selected{% endif %}>価格が安い順</option>
             <option value="price_desc" {% if request.GET.sort == "price_desc" %}selected{% endif %}>価格が高い順</option>
-        </select>
+        </select>        
         <button type="submit" class="btn btn-primary btn-sm">検索</button>
     </form>
 </div>
@@ -86,17 +86,35 @@
     <div class="pagination mt-4">
         <span class="step-links">
             {% if page_obj.has_previous %}
-                <a href="?page=1&category={{ request.GET.category }}&sort={{ request.GET.sort }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">最初</a>
-                <a href="?page={{ page_obj.previous_page_number }}&category={{ request.GET.category }}&sort={{ request.GET.sort }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">前へ</a>
+                <a href="?page=1&query={{ request.GET.query }}&category={{ request.GET.category }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}&sort={{ request.GET.sort }}">最初</a>
+                <a href="?page={{ page_obj.previous_page_number }}&query={{ request.GET.query }}&category={{ request.GET.category }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}&sort={{ request.GET.sort }}">前へ</a>
             {% endif %}
             <span>ページ {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}&category={{ request.GET.category }}&sort={{ request.GET.sort }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">次へ</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}&category={{ request.GET.category }}&sort={{ request.GET.sort }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}">最後</a>
+                <a href="?page={{ page_obj.next_page_number }}&query={{ request.GET.query }}&category={{ request.GET.category }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}&sort={{ request.GET.sort }}">次へ</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&query={{ request.GET.query }}&category={{ request.GET.category }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}&sort={{ request.GET.sort }}">最後</a>
             {% endif %}
         </span>
-    </div>  
-
+    </div> 
+    <h2 class="text-center mb-4">検索履歴</h2>
+    <!-- 検索履歴リスト -->
+    <ul class="list-group">
+        {% if cleaned_history %}
+            {% for history in cleaned_history %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <!-- 検索履歴アイテムをリンク化 -->
+                        <a href="{% url 'search_view' %}?query={{ history.query }}&category={{ history.category }}&min_price={{ history.min_price }}&max_price={{ history.max_price }}&sort={{ history.sort }}">
+                            {{ history.query }} 
+                            <small class="text-muted">- {{ history.timestamp|date:"Y-m-d H:i" }}</small>
+                        </a>                                                      
+                    </div>
+                </li>
+            {% endfor %}
+        {% else %}
+            <li class="list-group-item">検索履歴がありません。</li>
+        {% endif %}
+    </ul>
     <!-- 言語変更フォーム -->
     <form method="post" action="{% url 'set_language' %}">
         {% csrf_token %}

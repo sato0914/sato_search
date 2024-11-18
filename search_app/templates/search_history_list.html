@@ -8,17 +8,21 @@
     <h1 class="text-center mb-4">検索履歴</h1>
     <!-- 検索履歴リスト -->
     <ul class="list-group">
-        {% for history in history %}
-            <li class="list-group-item d-flex justify-content-between align-items-center"> 
-                <div>
-                    <!-- 検索履歴アイテムをリンク化 -->
-                    <a href="{% url 'search_view' %}?query={{ history.query }}&category={{ history.category }}&min_price={{ history.min_price }}&max_price={{ history.max_price }}&sort={{ history.sort }}">
-                        {{ history.query }} 
-                        <small class="text-muted">- {{ history.timestamp|date:"Y-m-d H:i" }}</small>
-                    </a>
-                </div>
-            </li>
-        {% endfor %}
+        {% if cleaned_history %}
+            {% for history in cleaned_history %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <!-- 検索履歴アイテムをリンク化 -->
+                        <a href="{% url 'search_view' %}?query={{ history.query }}&category={{ history.category }}&min_price={{ history.min_price }}&max_price={{ history.max_price }}&sort={{ history.sort }}">
+                            {{ history.query }} 
+                            <small class="text-muted">- {{ history.timestamp|date:"Y-m-d H:i" }}</small>
+                        </a>                                                      
+                    </div>
+                </li>
+            {% endfor %}
+        {% else %}
+            <li class="list-group-item">検索履歴がありません。</li>
+        {% endif %}
     </ul>
     <!-- 最初の画面に戻るボタン -->
     <div class="mt-4 text-center">

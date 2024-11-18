@@ -19,6 +19,7 @@ from .serializers import ProductSerializer
 from decimal import Decimal, InvalidOperation
 from django.utils.translation import activate
 from django.urls import reverse
+import logging
 import re
 
 @login_required
@@ -109,21 +110,31 @@ def search_view(request):
                 user=request.user,
                 query=query,
                 category=category_name,
-                min_price=min_price,
-                max_price=max_price,
+                min_price=min_price if min_price else None,
+                max_price=max_price if max_price else None,
                 sort=sort_by
             )
+
 
     # 最近の検索履歴を取得
     recent_history = []
     if request.user.is_authenticated:
         recent_history = SearchHistory.objects.filter(user=request.user).order_by('-timestamp')[:30]
 
-    # 検索履歴を整形
-    cleaned_history = [
-        re.sub(r'\(.*?\)', '', history.query).strip()  # 括弧内の文字列を削除し、前後の空白を取り除く
-        for history in recent_history
-    ]
+    cleaned_history = []
+    if request.user.is_authenticated:
+        recent_history = SearchHistory.objects.filter(user=request.user).order_by('-timestamp')[:5]
+        cleaned_history = [
+            {
+                'query': history.query,
+                'category': history.category,
+                'min_price': history.min_price if history.min_price else '任意',  # '任意'と表示
+                'max_price': history.max_price if history.max_price else '任意',  # '任意'と表示
+                'sort': history.sort,
+                'timestamp': history.timestamp
+            }
+            for history in recent_history
+        ]
 
     # 検索処理
     if query:
@@ -141,18 +152,29 @@ def search_view(request):
         except Category.DoesNotExist:
             results = results.none()
 
-    if min_price:
+    # 価格が空の場合、Noneに設定
+    min_price = min_price if min_price else None
+    max_price = max_price if max_price else None
+
+
+    # min_priceとmax_priceが空でない場合のみ変換
+    if min_price and min_price != "":
         try:
             min_price = Decimal(min_price)
-            results = results.filter(price__gte=min_price)
         except InvalidOperation:
-            min_price = None
-    if max_price:
+            min_price = None  # 無効な値の場合、Noneに設定
+
+    if max_price and max_price != "":
         try:
             max_price = Decimal(max_price)
-            results = results.filter(price__lte=max_price)
         except InvalidOperation:
-            max_price = None
+            max_price = None  # 無効な値の場合、Noneに設定
+
+    # min_priceとmax_priceがNoneならデフォルト値を設定
+    if min_price is None:
+        min_price = Decimal('0')  # 価格が指定されていない場合は0でフィルタ
+    if max_price is None:
+        max_price = Decimal('inf')  # 最大価格は無限大でフィルタ
 
     # 並び替え
     if sort_by == 'price_asc':
