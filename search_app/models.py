@@ -33,6 +33,10 @@ class Product(models.Model):
 class SearchHistory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_("User"))
     query = models.CharField(max_length=255, verbose_name=_("Search Query"))
+    category = models.CharField(max_length=255, null=True, blank=True, verbose_name=_("Category"))
+    min_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name=_("Min Price"))
+    max_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name=_("Max Price"))
+    sort = models.CharField(max_length=50, null=True, blank=True, verbose_name=_("Sort Order"))
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Timestamp"))
 
     def __str__(self):

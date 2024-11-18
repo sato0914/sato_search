@@ -95,7 +95,9 @@ def search_view(request):
     max_price = request.GET.get('max_price')
     sort_by = request.GET.get('sort', 'name')
 
+    # 検索履歴を保存
     if query and request.user.is_authenticated:
+        # 既存の同じクエリがある場合は最新のものだけを残す
         existing_histories = SearchHistory.objects.filter(user=request.user, query=query)
         if existing_histories.exists():
             existing_histories.exclude(id=existing_histories.latest('timestamp').id).delete()
@@ -105,14 +107,16 @@ def search_view(request):
         else:
             SearchHistory.objects.create(user=request.user, query=query)
 
-    # ログインしていない場合は検索履歴を表示しない
+    # 最近の検索履歴を取得
     recent_history = []
     if request.user.is_authenticated:
+        # 最新30件の履歴を取得
         recent_history = SearchHistory.objects.filter(user=request.user).order_by('-timestamp')[:30]
 
+    # 検索履歴を整形
     cleaned_history = [re.sub(r'\(.*?\)', '', history.query).strip() for history in recent_history]
 
-    # フルテキスト検索と部分一致検索
+    # 検索処理
     if query:
         search_vector = SearchVector('name', 'description')
         search_query = SearchQuery(query)
@@ -131,11 +135,10 @@ def search_view(request):
     # 価格フィルタリング
     if min_price:
         min_price = Decimal(min_price)
-        queryset = queryset.filter(price__gte=min_price)
+        results = results.filter(price__gte=min_price)
     if max_price:
         max_price = Decimal(max_price)
-        queryset = queryset.filter(price__lte=max_price)
-
+        results = results.filter(price__lte=max_price)
 
     # 並び替え
     if sort_by == 'price_asc':
@@ -145,18 +148,18 @@ def search_view(request):
     else:
         results = results.order_by('name')
 
-    # Paginator設定
+    # ページネーション
     paginator = Paginator(results, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    # おすすめ商品の関連性向上
+    # 関連商品を計算
     related_products = Product.objects.none()
     if results.exists():
         categories = results.values_list('category', flat=True).distinct()
         related_by_category = Product.objects.filter(category__in=categories).exclude(id__in=results)
 
-        # 価格範囲の取得
+        # 価格範囲
         price_range = results.aggregate(min_price=Min('price'), max_price=Max('price'))
         price_range_min = price_range.get('min_price', 0)
         price_range_max = price_range.get('max_price', Decimal('inf'))
@@ -174,9 +177,9 @@ def search_view(request):
         'result_count': results.count(),
         'categories': Category.objects.all(),
         'related_products': related_products,
+        'recent_history': recent_history,
         'cleaned_history': cleaned_history,
     })
-
 
 def ajax_search_view(request):
     if request.is_ajax() and request.method == "GET":

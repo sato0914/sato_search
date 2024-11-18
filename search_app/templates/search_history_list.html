@@ -6,12 +6,16 @@
 {% block content %}
 <div class="container mt-5">
     <h1 class="text-center mb-4">検索履歴</h1>
-    <!-- 商品リスト -->
+    <!-- 検索履歴リスト -->
     <ul class="list-group">
         {% for history in history %}
             <li class="list-group-item d-flex justify-content-between align-items-center"> 
                 <div>
-                    <p>{{ history.query }}</p>
+                    <!-- 検索履歴アイテムをリンク化 -->
+                    <a href="{% url 'search_view' %}?query={{ history.query }}&category={{ history.category }}&min_price={{ history.min_price }}&max_price={{ history.max_price }}&sort={{ history.sort }}">
+                        {{ history.query }} 
+                        <small class="text-muted">- {{ history.timestamp|date:"Y-m-d H:i" }}</small>
+                    </a>
                 </div>
             </li>
         {% endfor %}
