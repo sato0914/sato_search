@@ -117,13 +117,13 @@
         {% endif %}
     </ul>
     <!-- 言語変更フォーム -->
-    <form method="post" action="{% url 'set_language' %}">
+    <!-- <form method="post" action="{% url 'set_language' %}">
         {% csrf_token %}
         <select name="language">
             <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>
             <option value="ja" {% if LANGUAGE_CODE == 'ja' %}selected{% endif %}>日本語</option>
         </select>
         <button type="submit">{% trans "Change Language" %}</button>
-    </form>  
+    </form>   -->
 </div>
 {% endblock %}

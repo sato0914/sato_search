@@ -14,7 +14,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Product, Category, SearchHistory, Like
-from .forms import ProductForm, SearchForm
+from .forms import ProductForm, SearchForm, CustomUserCreationForm
 from .serializers import ProductSerializer
 from decimal import Decimal, InvalidOperation
 from django.utils.translation import activate
@@ -278,22 +278,35 @@ class ProductSerializer(serializers.ModelSerializer):
 
 def register(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        password_confirm = request.POST['password_confirm']
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        password_confirm = request.POST.get('password_confirm')
 
-        if password == password_confirm:
-            try:
-                user = User.objects.create_user(username=username, password=password)
-                user.save()
-                login(request, user)  # 自動でログインさせる場合
-                messages.success(request, 'Registration successful.')
-                return redirect('search_view')  # 登録後にリダイレクトするビューの名前を指定
-            except Exception as e:
-                messages.error(request, f'Error: {e}')
-        else:
+        # パスワードの一致確認
+        if password != password_confirm:
             messages.error(request, 'Passwords do not match.')
+            return render(request, 'registration/register.html')
 
+        try:
+            # ユーザー名がすでに存在するか確認
+            if User.objects.filter(username=username).exists():
+                messages.error(request, 'Username already taken. Please choose another one.')
+                return render(request, 'registration/register.html')
+
+            # ユーザーを作成して保存
+            user = User.objects.create_user(username=username, password=password)
+            user.save()
+
+            # 作成したユーザーで自動ログイン
+            login(request, user)
+            messages.success(request, 'Registration successful. You are now logged in.')
+            return redirect('search_view')  # ログイン後にリダイレクトするページを指定
+
+        except Exception as e:
+            messages.error(request, f'An error occurred: {e}')
+            return render(request, 'registration/register.html')
+
+    # GETリクエストの場合、空の登録フォームを表示
     return render(request, 'registration/register.html')
 
 def user_login(request):
@@ -304,6 +317,8 @@ def user_login(request):
         if user is not None:
             login(request, user)
             return redirect('search_view')
+        else:
+            return render(request, 'registration/login.html', {'error': 'Invalid username or password'})
     return render(request, 'registration/login.html')
 
 @login_required

@@ -122,7 +122,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    BASE_DIR / "search_app" / "static",
 ]
 
 # Default primary key field type
@@ -138,3 +138,6 @@ CACHES = {
 }
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CSRF_COOKIE_SECURE = False  # HTTPSを使用していない場合、これをFalseに設定
+CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://127.0.0.1']  # ドメインを追加

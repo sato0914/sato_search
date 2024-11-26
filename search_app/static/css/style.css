@@ -1,0 +1,283 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Noto Sans', sans-serif;
+}
+
+body {
+  background-color: #e0c29c;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* 最小高さを100vhにして、画面全体に表示 */
+  justify-content: space-between;  /* フッターを下部に固定 */
+}
+
+main {
+  flex-grow: 1;
+}
+/* ヘッダー全体のスタイル */
+.header {
+  background-color: #dd8241;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* サイトタイトルのスタイル */
+.site-title {
+  color: white;
+  font-size: 24px;
+  margin: 0;
+}
+
+/* メニュー */
+.menu {
+  display: flex;
+  align-items: center;
+}
+
+.menu a, .menu button {
+  margin-left: 10px;
+  color: white;
+  text-decoration: none;
+}
+
+.menu a:hover, .menu button:hover {
+  text-decoration: underline;
+}
+
+/* ログイン/登録フォーム */
+body.login-page, body.register-page {
+  display: flex;  /* Flexboxを使用 */
+  flex-direction: column;  /* 上から下へ縦にレイアウト */
+  justify-content: space-between;  /* フッターを下に配置 */
+  align-items: center;  /* 中央揃え */
+  min-height: 100vh;  /* 最小高さ100vhでページ全体を埋める */
+  margin: 0;  /* 余計なマージンを削除 */
+  background-color: #e0c29c; /* 背景色 */
+}
+
+.login-box, .register-box {
+  max-width: 400px;  /* フォームの最大幅 */
+  width: 100%;
+  margin: 0 auto;
+  margin-top: 0px;
+  text-align: center;
+  border-radius: 10px;
+  padding: 0 20px 20px 20px;
+}
+
+.glass-container {
+  width: 100%;
+  max-width: 300px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  border: 1px solid #fff;
+  position: relative;
+  text-align: center;
+  z-index: 1;
+  background-clip: padding-box;
+  backdrop-filter: blur(5px);
+}
+
+.login-box {
+  width: 100%;
+  max-width: 250px;
+  text-align: center;
+}
+
+.login-box,.register-box h2 {
+  color: #fff;
+  margin: 30px 0 -20px;
+}
+
+/* フォーム内のインプットフィールド */
+body.login-page input,
+body.register-page input {
+  padding: 10px;
+  margin-top: 25px;
+  border: 1px solid #fff;
+  border-radius: 10px;
+  background: transparent;
+  color: #fff;
+  font-size: 13px;
+}
+
+body.login-page input::placeholder,
+body.register-page input::placeholder {
+  color: #fff;
+}
+
+body.login-page input:focus,
+body.register-page input:focus {
+  outline: none;
+}
+/* フッター */
+footer {
+  background-color: #dd8241;  /* 背景色 */
+  width: 100%;  /* 幅を100%に */
+  padding: 10px 20px;
+  text-align: center;
+  color: white;
+  position: relative;
+  margin-top: auto;  /* コンテンツが多い場合にフッターが最下部に配置 */
+  bottom: 0;  /* フッターを画面下に固定 */
+  box-sizing: border-box;  /* パディング分を含めてサイズ調整 */
+}
+/* フッターの位置を固定 */
+body.login-page, body.register-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* フッターを下に配置 */
+  min-height: 100vh;
+}
+/* フッターが下に来るように */
+body.login-page .login-box, body.register-page .register-box {
+  margin-top: auto; /* フォームが中央に配置される */
+}
+/* 検索ページのフッター */
+body.search-page {
+  display: flex;
+  flex-direction: column;  /* 上から下へ縦にレイアウト */
+  min-height: 100vh;  /* 最小高さ100vh */
+}
+
+small {
+  color: #ffffff;
+}
+
+/* メインコンテンツ */
+.container {
+  flex: 1;
+  max-width: 1000px;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  min-height: calc(100vh - 100px); /* フッターの高さを考慮した最小の高さを設定 */
+  margin-bottom: 40px;
+}
+.main-content {
+  flex: 1;
+}
+
+/* リストグループのスタイル */
+.list-group {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.list-group-item {
+  background-color: #feeeda; /* 薄茶色の背景色 */
+  padding: 20px;
+  border-bottom: 1px solid #ccc; /* 下線 */
+}
+
+#headerToggle {
+  color: #333;
+}
+
+/* メニューの位置 */
+.options {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+  font-size: 12px;
+  color: white;
+}
+.options input {
+  margin-right: 5px;
+  margin-top: 0;
+}
+
+.options a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.options a:hover {
+  text-decoration: underline;
+}
+
+/* 検索フォームのスタイル */
+.search-form-container {
+  background-color: #fdf5e6; /* 薄黄色系の背景色 */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px; /* 最大幅を設定して中央に配置 */
+  margin: 0 auto; /* 左右中央揃え */
+  margin-top: 30px;
+}
+
+/* フォームの各ラベルと入力フィールド */
+.search-form-container label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.search-form-container input, 
+.search-form-container select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.search-form-container input[type="number"] {
+  width: auto;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+/* 並び替えのセレクトボックス */
+.search-form-container select {
+  width: auto;
+  display: inline-block;
+}
+
+/* 検索ボタン */
+.search-form-container button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.search-form-container button:hover {
+  background-color: #0056b3;
+}
+
+/* ボタン */
+button{
+  background: #fff;
+  color: black;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+button:hover{
+  background: transparent;
+  color: white;
+  outline: 1px solid #fff;
+}
+body.login-box,body.register-box p{
+  font-size: 12px;
+  color: #fff;
+  margin-top: 15px;
+}
