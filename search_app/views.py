@@ -1,5 +1,6 @@
 from django.contrib.postgres.search import SearchVector, SearchQuery
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.decorators.http import require_POST
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm
@@ -47,9 +48,14 @@ def product_update(request, pk):
         form = ProductForm(instance=product)
     return render(request, 'product_form.html', {'form': form, 'product': product})
 
-def product_detail(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    return render(request, 'product_detail.html', {'product': product})
+def product_detail(request, product_id):
+    product = Product.objects.get(id=product_id)
+    likes_count = product.like_set.count()  # いいねの数を取得
+
+    return render(request, 'product_detail.html', {
+        'product': product,
+        'likes_count': likes_count,  # いいねの数を渡す
+    })
 
 @login_required
 def product_delete(request, pk):
@@ -339,15 +345,30 @@ def set_language_view(request):
     print(request.session.get('language'))  # セッションに保存されている言語を確認
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('search_view')))
 
-@login_required
 def like_product(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    try:
+        # 商品を取得
+        product = get_object_or_404(Product, id=product_id)
 
-    # すでにいいねされているか確認
-    like, created = Like.objects.get_or_create(user=request.user, product=product)
+        # 認証されたユーザーでなければ処理を中断
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'ユーザーが認証されていません'}, status=403)
 
-    if not created:
-        # すでにいいねされている場合は、それを削除（アンライク）
-        like.delete()
+        # いいねの処理
+        liked = product.likes.filter(user=request.user).exists()
+        if liked:
+            product.likes.filter(user=request.user).delete()  # 既にいいねしている場合、解除
+            liked = False
+        else:
+            product.likes.create(user=request.user)  # まだいいねしていない場合、いいねを追加
+            liked = True
 
-    return redirect('product_detail', product_id=product.id)  # 詳細ページへリダイレクト
+        likes_count = product.like_set.count()  # 商品のいいね数を取得
+
+        # JSONレスポンスを返す
+        return JsonResponse({
+            'liked': liked,
+            'likes_count': likes_count  # 更新されたいいね数を返す
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

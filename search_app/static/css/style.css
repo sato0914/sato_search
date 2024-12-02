@@ -38,13 +38,46 @@ main {
   align-items: center;
 }
 
-.menu a, .menu button {
-  margin-left: 10px;
-  color: white;
+/* ハンバーガーメニューアイコン */
+.hamburger-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 25px;
+  cursor: pointer;
+}
+
+.hamburger-menu span {
+  display: block;
+  width: 100%;
+  height: 4px;
+  background-color: white;
+  border-radius: 2px;
+  transition: all 0.3s ease-in-out;
+}
+
+/* メニューコンテンツのスタイル */
+.menu-content {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 4px;
+  display: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.menu-content a {
+  display: block;
+  margin-bottom: 5px;
+  color: #ffffff;
   text-decoration: none;
 }
 
-.menu a:hover, .menu button:hover {
+.menu-content a:hover {
   text-decoration: underline;
 }
 
