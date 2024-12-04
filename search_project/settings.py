@@ -136,8 +136,9 @@ CACHES = {
         'LOCATION': 'unique-snowflake',
     }
 }
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'  # メディアファイルへのURLパス
+MEDIA_ROOT = BASE_DIR / 'media'  # メディアファイルの保存場所
+
 
 CSRF_COOKIE_SECURE = False  # HTTPSを使用していない場合、これをFalseに設定
 CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://127.0.0.1']  # ドメインを追加

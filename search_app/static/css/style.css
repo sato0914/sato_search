@@ -194,7 +194,9 @@ small {
 .main-content {
   flex: 1;
 }
-
+.card-body {
+  background-color: #feeeda;
+}
 /* リストグループのスタイル */
 .list-group {
   list-style: none;

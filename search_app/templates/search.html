@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% load i18n %}
 {% load humanize %}
 
@@ -44,39 +45,47 @@
         <button type="submit" class="btn btn-primary btn-sm">検索</button>
     </form>
 </div>
+
 <div class="container mt-5">
     <!-- 商品リスト -->
-    <ul id="product-list" class="list-group">
+    <div class="row">
         {% for product in page_obj.object_list %}
-            <li class="list-group-item">
-                <h3>{{ product.name }}</h3>
-                <p>{{ product.price|floatformat:0 }}円</p>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <!-- 商品画像がある場合のみ表示 -->
                 {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100px; height: auto;">
-                {% endif %}
-        
-                <a href="{% url 'product_detail' product.id %}" class="btn btn-primary btn-sm">詳細</a>
-                <a href="{% url 'product_delete' product.id %}" class="btn btn-danger btn-sm">削除</a>
-
-                <!-- いいねボタン -->
-                {% if request.user.is_authenticated %}
-                    <form method="post" action="{% url 'toggle_like' product.id %}" style="display:inline;" id="like-form-{{ product.id }}">
-                        {% csrf_token %}
-                        {% if product.id in user_liked_products %}
-                            <a href="#" class="btn btn-warning btn-sm" onclick="document.getElementById('like-form-{{ product.id }}').submit();">いいね解除</a>
-                        {% else %}
-                            <a href="#" class="btn btn-success btn-sm" onclick="document.getElementById('like-form-{{ product.id }}').submit();">いいね</a>
-                        {% endif %}
-                    </form>
+                    <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
                 {% else %}
-                    <!-- ログインしていない場合、何も表示しない（ボタンを非表示にする） -->
+                    <img class="card-img-top" src="{% static 'images/no_image.jpg' %}" alt="デフォルト画像" style="height: 200px; object-fit: cover;">
                 {% endif %}
-                <span>{{ product.like_count }} いいね</span>
-            </li>
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">{{ product.price|floatformat:0 }}円</p>
+                    <a href="{% url 'product_detail' product.id %}" class="btn btn-primary btn-sm">詳細</a>
+                    <a href="{% url 'product_delete' product.id %}" class="btn btn-danger btn-sm">削除</a>
+                    {% if request.user.is_authenticated %}
+                        <form method="post" action="{% url 'toggle_like' product.id %}" style="display:inline;" id="like-form-{{ product.id }}">
+                            {% csrf_token %}
+                            {% if product.id in user_liked_products %}
+                                <a href="#" class="btn btn-warning btn-sm" onclick="document.getElementById('like-form-{{ product.id }}').submit();">いいね解除</a>
+                            {% else %}
+                                <a href="#" class="btn btn-success btn-sm" onclick="document.getElementById('like-form-{{ product.id }}').submit();">いいね</a>
+                            {% endif %}
+                        </form>
+                    {% else %}
+                        <!-- ログインしていない場合、何も表示しない（ボタンを非表示にする） -->
+                    {% endif %}
+                    <span>{{ product.like_count }} いいね</span>
+                </div>
+            </div>
+        </div>
         {% empty %}
-            <li class="list-group-item">結果が見つかりませんでした。</li>
+            <div class="col-12">
+                <li class="list-group-item">結果が見つかりませんでした。</li>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
+    
     <!-- リアルタイム検索結果 -->
     <ul id="searchResults" class="list-group" style="display:none;"></ul>
 
@@ -111,7 +120,8 @@
                 <a href="?page={{ page_obj.paginator.num_pages }}&query={{ request.GET.query }}&category={{ request.GET.category }}&min_price={{ request.GET.min_price }}&max_price={{ request.GET.max_price }}&sort={{ request.GET.sort }}">最後</a>
             {% endif %}
         </span>
-    </div> 
+    </div>
+
     <h2 class="text-center mb-4">検索履歴</h2>
     <!-- 検索履歴リスト -->
     <ul class="list-group">
