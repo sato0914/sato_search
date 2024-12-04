@@ -6,7 +6,7 @@
 {% block content %}
 <div class="container mt-5">
     <h2 class="text-center mb-4">{{ product.name }}を削除しますか?</h2>
-    <form method="POST" class="text-center">
+    <form method="POST" class="text-center delete-page">
         {% csrf_token %}
         <button type="submit" class="btn btn-danger">削除</button>
         <a href="{% url 'product_detail' product.pk %}" class="btn btn-secondary">キャンセル</a>

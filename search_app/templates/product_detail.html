@@ -21,21 +21,14 @@
                 {% else %}
                     <p>画像はありません。</p>
                 {% endif %}
-                <button id="like-button" data-product-id="{{ product.id }}">
-                    {% if user in product.like_set.all %}
-                      解除
-                    {% else %}
-                      いいね
-                    {% endif %}
-                </button>
-                <p id="likes-count">{{ likes_count }} いいね</p>
+                <!-- いいね数の表示 -->
+                <p class="card-text">
+                    <span>{{ like_count }} いいね</span>
+                </p>
                 <!-- ボタンの配置 -->
                 <div class="d-flex justify-content-between mt-4">
                     <a href="{% url 'product_update' product.pk %}" class="btn btn-secondary">編集</a>
-                    <form action="{% url 'product_delete' product.pk %}" method="POST" onsubmit="return confirm('本当に削除しますか?');">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">削除</button>
-                    </form>
+                    <a href="{% url 'product_delete' product.pk %}" class="btn btn-danger">削除</a>                  
                     <a href="{% url 'search_view' %}" class="btn btn-primary">検索画面へ戻る</a>
                 </div>
             </div>

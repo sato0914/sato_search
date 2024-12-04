@@ -43,39 +43,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 .catch(error => console.error('Error:', error));
         });
     }
-
-    // いいねボタンの処理
-    const likeButton = document.getElementById('like-button');
-    if (likeButton) {
-        likeButton.addEventListener('click', function () {
-            const productId = likeButton.getAttribute('data-product-id');
-
-            // AJAXリクエストを送信 (POST メソッドを使用)
-            fetch(`/like_product/${productId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                },
-            })
-            .then(response => {
-                if (!response.ok) {
-                    console.error('Error response:', response);
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // ボタンのテキストといいね数を更新
-                if (data.liked) {
-                    likeButton.innerText = 'いいね解除';
-                } else {
-                    likeButton.innerText = 'いいね';
-                }
-                document.getElementById('likes-count').innerText = `${data.likes_count} いいね`;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });            
+});
+document.addEventListener('click', function (e) {
+    if (e.target.matches('.like-button')) {
+        e.preventDefault();
+        const url = e.target.dataset.url;
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.liked) {
+                e.target.textContent = 'いいね解除';
+            } else {
+                e.target.textContent = 'いいね';
+            }
+            e.target.nextElementSibling.textContent = `${data.like_count} いいね`;
         });
     }
 });

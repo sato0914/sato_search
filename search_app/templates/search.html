@@ -54,21 +54,24 @@
                 {% if product.image %}
                     <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100px; height: auto;">
                 {% endif %}
-                <p>いいね: <span id="likes-count-{{ product.id }}">{{ product.like_set.count }}</span></p>
-                {% if user.is_authenticated %}
-                <a href="#" class="btn btn-sm {% if has_liked.product.id %}btn-danger{% else %}btn-primary{% endif %}" 
-                    id="like-button-{{ product.id }}" 
-                    data-product-id="{{ product.id }}">
-                    {% csrf_token %}
-                    {% if has_liked.product.id %}
-                        解除
-                    {% else %}
-                        いいね
-                    {% endif %}
-                </a>
-                {% endif %}
+        
                 <a href="{% url 'product_detail' product.id %}" class="btn btn-primary btn-sm">詳細</a>
                 <a href="{% url 'product_delete' product.id %}" class="btn btn-danger btn-sm">削除</a>
+
+                <!-- いいねボタン -->
+                {% if request.user.is_authenticated %}
+                    <form method="post" action="{% url 'toggle_like' product.id %}" style="display:inline;" id="like-form-{{ product.id }}">
+                        {% csrf_token %}
+                        {% if product.id in user_liked_products %}
+                            <a href="#" class="btn btn-warning btn-sm" onclick="document.getElementById('like-form-{{ product.id }}').submit();">いいね解除</a>
+                        {% else %}
+                            <a href="#" class="btn btn-success btn-sm" onclick="document.getElementById('like-form-{{ product.id }}').submit();">いいね</a>
+                        {% endif %}
+                    </form>
+                {% else %}
+                    <!-- ログインしていない場合、何も表示しない（ボタンを非表示にする） -->
+                {% endif %}
+                <span>{{ product.like_count }} いいね</span>
             </li>
         {% empty %}
             <li class="list-group-item">結果が見つかりませんでした。</li>

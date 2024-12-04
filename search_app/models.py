@@ -43,11 +43,11 @@ class SearchHistory(models.Model):
 
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey('Product', on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(auto_now_add=True)
-
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="likes")
+    created_at = models.DateTimeField(auto_now_add=True)
+    
     class Meta:
-        unique_together = ('user', 'product')  # 同じ商品に対する同一ユーザーの重複いいねを防ぐ
+        unique_together = ('user', 'product')
 
     def __str__(self):
         return f"{self.user.username} likes {self.product.name}"

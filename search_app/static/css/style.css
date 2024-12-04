@@ -10,12 +10,15 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh; /* 最小高さを100vhにして、画面全体に表示 */
-  justify-content: space-between;  /* フッターを下部に固定 */
+  margin: 0;
 }
 
 main {
   flex-grow: 1;
+  margin-top: 60px;  /* フッターが重ならないようにコンテンツにマージントップを追加 */
+  padding-bottom: 60px; /* フッターが被らないようにコンテンツ下に余白を追加 */
 }
+
 /* ヘッダー全体のスタイル */
 .header {
   background-color: #dd8241;
@@ -23,6 +26,12 @@ main {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;  /* 横幅を100%に設定 */
+  position: fixed;  /* 固定表示 */
+  top: 0;  /* 画面の一番上に固定 */
+  left: 0;  /* 左端に固定 */
+  box-sizing: border-box;  /* パディングを含めて幅調整 */
+  z-index: 10;  /* ヘッダーを前面に表示 */
 }
 
 /* サイトタイトルのスタイル */
@@ -83,20 +92,18 @@ main {
 
 /* ログイン/登録フォーム */
 body.login-page, body.register-page {
-  display: flex;  /* Flexboxを使用 */
-  flex-direction: column;  /* 上から下へ縦にレイアウト */
-  justify-content: space-between;  /* フッターを下に配置 */
-  align-items: center;  /* 中央揃え */
-  min-height: 100vh;  /* 最小高さ100vhでページ全体を埋める */
-  margin: 0;  /* 余計なマージンを削除 */
-  background-color: #e0c29c; /* 背景色 */
+  display: flex;
+  flex-direction: column;  /* 上から下に並べる */
+  justify-content: center;  /* 中央に配置 */
+  align-items: center;  /* 横方向にも中央に配置 */
+  min-height: 100vh; /* 最小高さ100vh */
+  margin: 0;
 }
 
 .login-box, .register-box {
   max-width: 400px;  /* フォームの最大幅 */
   width: 100%;
   margin: 0 auto;
-  margin-top: 0px;
   text-align: center;
   border-radius: 10px;
   padding: 0 20px 20px 20px;
@@ -156,22 +163,11 @@ footer {
   padding: 10px 20px;
   text-align: center;
   color: white;
-  position: relative;
-  margin-top: auto;  /* コンテンツが多い場合にフッターが最下部に配置 */
-  bottom: 0;  /* フッターを画面下に固定 */
+  position: fixed;  /* 固定表示 */
+  bottom: 0;  /* 画面下に固定 */
   box-sizing: border-box;  /* パディング分を含めてサイズ調整 */
 }
-/* フッターの位置を固定 */
-body.login-page, body.register-page {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* フッターを下に配置 */
-  min-height: 100vh;
-}
-/* フッターが下に来るように */
-body.login-page .login-box, body.register-page .register-box {
-  margin-top: auto; /* フォームが中央に配置される */
-}
+
 /* 検索ページのフッター */
 body.search-page {
   display: flex;
@@ -193,7 +189,6 @@ small {
   background-color: #ffffff;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  min-height: calc(100vh - 100px); /* フッターの高さを考慮した最小の高さを設定 */
   margin-bottom: 40px;
 }
 .main-content {
@@ -313,4 +308,40 @@ body.login-box,body.register-box p{
   font-size: 12px;
   color: #fff;
   margin-top: 15px;
+}
+
+/* 削除ページ専用のボタンスタイル */
+.delete-page button[type="submit"] {
+  background-color: #dc3545;
+  color: white;
+  padding: 10px 20px;  /* ボタン内のパディング */
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-block;  /* インラインブロックでボタンを表示 */
+  text-align: center;
+  vertical-align: middle;  /* ボタンの下部余白をなくす */
+  margin-top: 15px;  /* 上部にスペースを追加 */
+}
+
+.delete-page button[type="submit"]:hover {
+  background-color: #c82333;
+  color: white;
+}
+
+/* 削除ページ専用のキャンセルボタンスタイル */
+.delete-page a.btn.btn-secondary {
+  padding: 10px 20px;  /* ボタン内のパディング */
+  border-radius: 10px;
+  background-color: #6c757d;
+  color: white;
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;  /* ボタンの下部余白をなくす */
+  margin-top: 15px;  /* 上部にスペースを追加 */
+}
+
+.delete-page a.btn.btn-secondary:hover {
+  background-color: #5a6268;
+  color: white;
 }

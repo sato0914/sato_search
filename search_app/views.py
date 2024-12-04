@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.paginator import Paginator
-from django.db.models import Q, Min, Max
+from django.db.models import Q, Min, Max, Count
 from django.utils import timezone
 from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
@@ -49,12 +49,12 @@ def product_update(request, pk):
     return render(request, 'product_form.html', {'form': form, 'product': product})
 
 def product_detail(request, product_id):
-    product = Product.objects.get(id=product_id)
-    likes_count = product.like_set.count()  # いいねの数を取得
+    product = get_object_or_404(Product, id=product_id)
+    like_count = product.likes.count()  # いいねの数を取得
 
     return render(request, 'product_detail.html', {
         'product': product,
-        'likes_count': likes_count,  # いいねの数を渡す
+        'like_count': like_count,
     })
 
 @login_required
@@ -147,6 +147,12 @@ def search_view(request):
             Q(search=search_query) | Q(name__icontains=query) | Q(description__icontains=query)
         )
 
+     # いいねデータを追加
+    results = results.annotate(like_count=Count('likes'))
+    user_liked_products = []
+    if request.user.is_authenticated:
+        user_liked_products = Like.objects.filter(user=request.user).values_list('product_id', flat=True)
+
     # カテゴリフィルタリング
     if category_name:
         try:
@@ -217,6 +223,7 @@ def search_view(request):
         'related_products': related_products,
         'recent_history': recent_history,
         'cleaned_history': cleaned_history,
+        'user_liked_products': user_liked_products,
     })
 
 def ajax_search_view(request):
@@ -345,30 +352,13 @@ def set_language_view(request):
     print(request.session.get('language'))  # セッションに保存されている言語を確認
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('search_view')))
 
-def like_product(request, product_id):
-    try:
-        # 商品を取得
-        product = get_object_or_404(Product, id=product_id)
+@login_required
+@require_POST
+def toggle_like(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    like, created = Like.objects.get_or_create(user=request.user, product=product)
 
-        # 認証されたユーザーでなければ処理を中断
-        if not request.user.is_authenticated:
-            return JsonResponse({'error': 'ユーザーが認証されていません'}, status=403)
+    if not created:
+        like.delete()
 
-        # いいねの処理
-        liked = product.likes.filter(user=request.user).exists()
-        if liked:
-            product.likes.filter(user=request.user).delete()  # 既にいいねしている場合、解除
-            liked = False
-        else:
-            product.likes.create(user=request.user)  # まだいいねしていない場合、いいねを追加
-            liked = True
-
-        likes_count = product.like_set.count()  # 商品のいいね数を取得
-
-        # JSONレスポンスを返す
-        return JsonResponse({
-            'liked': liked,
-            'likes_count': likes_count  # 更新されたいいね数を返す
-        })
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+    return redirect(request.META.get('HTTP_REFERER', 'search_view'))
