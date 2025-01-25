@@ -13,26 +13,78 @@
 <body class="search-page">
     <!-- ヘッダー全体 -->
     <header class="header">
-        <h1 class="site-title">商品検索サイト</h1>
-        <div class="menu">
-            <div class="hamburger-menu" id="hamburgerMenu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <div id="headerContent" class="menu-content" style="display: none;">
-                {% if user.is_authenticated %}
-                    <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">ログアウト</a>
-                {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-primary btn-sm">ログイン</a>
-                    <a href="{% url 'register' %}" class="btn btn-success btn-sm">新規登録</a>
-                {% endif %}
-                <a href="{% url 'product_create' %}" class="btn btn-secondary btn-sm">新規商品を追加</a>
-                <a href="{% url 'search_view' %}" class="btn btn-secondary btn-sm">検索画面Top</a>
-                <a href="{% url 'product_list' %}" class="btn btn-secondary btn-sm">商品一覧</a>
+        <div class="header-inner">
+            <!-- 左側に配置するタイトル -->
+            <h1 class="site-title">商品検索サイト</h1>
+            
+            <!-- 右側に配置するメニュー（ハンバーガーメニューと検索ボタン） -->
+            <div class="menu">
+                <!-- 検索ボタン -->
+                <button id="openSearchModal" class="btn btn-secondary btn-sm">検索</button>
+    
+                <!-- ハンバーガーメニュー -->
+                <div class="hamburger-menu" id="hamburgerMenu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+    
+                <!-- メニュー内容 -->
+                <div id="headerContent" class="menu-content" style="display: none;">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">ログアウト</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-primary btn-sm">ログイン</a>
+                        <a href="{% url 'register' %}" class="btn btn-success btn-sm">新規登録</a>
+                    {% endif %}
+                    <a href="{% url 'product_create' %}" class="btn btn-secondary btn-sm">新規商品を追加</a>
+                    <a href="{% url 'search_view' %}" class="btn btn-secondary btn-sm">検索画面Top</a>
+                </div>
             </div>
         </div>
     </header>
+    
+    
+    <!-- モーダル全体 -->
+    <div id="search-modal" class="modal-overlay" style="display: none;">
+        <!-- モーダル内容 -->
+        <div class="modal-content">
+            <button class="close-modal-btn">&times;</button>
+            <form method="get" action="{% url 'search_view' %}">
+                <label for="query">検索キーワード:</label>
+                <input type="text" name="query" placeholder="検索キーワード" list="history" id="query" value="{{ request.GET.query }}">
+                <datalist id="history">
+                    {% for history in search_history %}
+                        <option value="{{ history.query }}">{{ history.query }}</option>
+                    {% endfor %}
+                </datalist>
+                <label for="category">カテゴリ:</label>
+                <select name="category" id="category">
+                    <option value="">すべて</option>
+                    {% for category in categories %}
+                        <option value="{{ category.name }}" {% if request.GET.category == category.name %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <div>
+                    <label for="min_price">最低価格:</label>
+                    <input type="number" name="min_price" min="0" id="min_price" value="{{ request.GET.min_price }}">
+                </div>
+                <div>
+                    <label for="max_price">最高価格:</label>
+                    <input type="number" name="max_price" min="0" id="max_price" value="{{ request.GET.max_price }}">
+                </div>
+                <label for="sort">並び替え:</label>
+                <select name="sort" id="sort">
+                    <option value="name" {% if request.GET.sort == "name" %}selected{% endif %}>名前順</option>
+                    <option value="price_asc" {% if request.GET.sort == "price_asc" %}selected{% endif %}>価格が安い順</option>
+                    <option value="price_desc" {% if request.GET.sort == "price_desc" %}selected{% endif %}>価格が高い順</option>
+                </select>
+                <button type="submit" class="btn btn-primary btn-sm">検索</button>
+            </form>
+        </div>
+    </div>    
     <!-- ページごとのコンテンツ -->
     <main>
         {% block content %}

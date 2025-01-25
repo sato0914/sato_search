@@ -19,42 +19,41 @@ main {
   padding-bottom: 60px; /* フッターが被らないようにコンテンツ下に余白を追加 */
 }
 
-/* ヘッダー全体のスタイル */
-.header {
-  background-color: #dd8241;
-  padding: 10px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;  /* 横幅を100%に設定 */
-  position: fixed;  /* 固定表示 */
-  top: 0;  /* 画面の一番上に固定 */
-  left: 0;  /* 左端に固定 */
-  box-sizing: border-box;  /* パディングを含めて幅調整 */
-  z-index: 10;  /* ヘッダーを前面に表示 */
+/* headerのスタイル */
+header {
+  background-color: #dd8241;  /* 背景色 */
+  padding: 10px 20px; /* ヘッダー内のパディング */
 }
 
-/* サイトタイトルのスタイル */
+/* header-innerのレイアウト調整 */
+.header-inner {
+  display: flex;
+  justify-content: space-between; /* 左右にアイテムを配置 */
+  align-items: center;
+}
+
+/* タイトル (左端に配置) */
 .site-title {
+  margin: 0;
   color: white;
   font-size: 24px;
-  margin: 0;
 }
 
-/* メニュー */
+/* メニューの配置 (右側に配置) */
 .menu {
   display: flex;
   align-items: center;
 }
 
-/* ハンバーガーメニューアイコン */
+/* ハンバーガーメニューのスタイル */
 .hamburger-menu {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 30px;
-  height: 25px;
+  width: 25px;
+  height: 20px;
   cursor: pointer;
+  margin-left: 10px; /* ボタンとハンバーガーメニューの間隔 */
 }
 
 .hamburger-menu span {
@@ -62,8 +61,52 @@ main {
   width: 100%;
   height: 4px;
   background-color: white;
-  border-radius: 2px;
-  transition: all 0.3s ease-in-out;
+}
+
+/* 検索ボタン */
+.btn-sm {
+  margin-bottom: 10px;
+  font-size: 14px;
+  /* margin-left: 10px; ハンバーガーメニューとの間隔 */
+}
+
+/* モーダルの背景 */
+.modal-overlay {
+  position: fixed; /* 固定表示 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明の背景 */
+  display: none; /* 初期状態では非表示 */
+  justify-content: center; /* 横方向に中央寄せ */
+  align-items: center; /* 縦方向に中央寄せ */
+  z-index: 9999; /* モーダルが前面に来るように */
+}
+
+/* モーダルの内容 */
+.modal-content {
+  position: relative;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%; /* モーダルの幅を80%に設定（調整可能） */
+  max-width: 600px; /* 最大幅を600pxに制限（調整可能） */
+  box-sizing: border-box;
+}
+
+/* 閉じるボタン */
+.close-modal-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #333;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
 }
 
 /* メニューコンテンツのスタイル */
@@ -77,6 +120,7 @@ main {
   border-radius: 4px;
   display: none;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1050;
 }
 
 .menu-content a {
@@ -89,6 +133,30 @@ main {
 .menu-content a:hover {
   text-decoration: underline;
 }
+/* ハンバーガーメニューが開いている時のスタイル */
+.hamburger-menu.open + .menu-content {
+  display: block; /* メニューが表示される */
+}
+/* ラベルと入力フィールドに間隔を追加 */
+label {
+  display: block;  /* ラベルをブロック要素にして、次の要素と改行 */
+  margin-bottom: 8px; /* ラベルと入力フィールドの間に余白 */
+}
+
+/* 各フォーム入力フィールドに適切な間隔を設定 */
+input[type="text"], input[type="number"], select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 16px; /* 各入力フィールドの間隔 */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* モーダルのボタンに余白を追加 */
+button {
+  margin-top: 10px;  /* ボタンの上に余白 */
+}
+
 
 /* ログイン/登録フォーム */
 body.login-page, body.register-page {
@@ -196,7 +264,20 @@ small {
 }
 .card-body {
   background-color: #feeeda;
+  padding: 30px;
+  border-radius: 10px;
 }
+.card-text{
+  margin-top: 20px;
+}
+.img-fluid{
+  width: 300px;
+  height: auto;
+  display: block;  /* 画像の余計な隙間を削除 */
+  margin: 0 auto;
+  border-radius: 10px;
+}
+
 /* リストグループのスタイル */
 .list-group {
   list-style: none;
@@ -234,61 +315,6 @@ small {
 
 .options a:hover {
   text-decoration: underline;
-}
-
-/* 検索フォームのスタイル */
-.search-form-container {
-  background-color: #fdf5e6; /* 薄黄色系の背景色 */
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 600px; /* 最大幅を設定して中央に配置 */
-  margin: 0 auto; /* 左右中央揃え */
-  margin-top: 30px;
-}
-
-/* フォームの各ラベルと入力フィールド */
-.search-form-container label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.search-form-container input, 
-.search-form-container select {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.search-form-container input[type="number"] {
-  width: auto;
-  display: inline-block;
-  margin-right: 10px;
-}
-
-/* 並び替えのセレクトボックス */
-.search-form-container select {
-  width: auto;
-  display: inline-block;
-}
-
-/* 検索ボタン */
-.search-form-container button {
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-.search-form-container button:hover {
-  background-color: #0056b3;
 }
 
 /* ボタン */
@@ -346,4 +372,14 @@ body.login-box,body.register-box p{
 .delete-page a.btn.btn-secondary:hover {
   background-color: #5a6268;
   color: white;
+}
+
+@media screen and (max-width: 768px) {
+  header {
+      flex-direction: column; /* 横並びから縦並びに */
+      align-items: flex-start;
+  }
+  .search-btn {
+      margin-left: 0; /* 横並びの際は余分なマージンをなくす */
+  }
 }

@@ -6,45 +6,6 @@
 {% block title %}商品検索{% endblock %}
 
 {% block content %}
-<!-- 検索フォーム -->
-<div class="search-form-container">
-    <form method="get" action="{% url 'search_view' %}">
-        <label for="query">検索キーワード:</label>
-        <input type="text" name="query" placeholder="検索キーワード" list="history" id="query" value="{{ request.GET.query }}">
-        <datalist id="history">
-            {% for history in search_history %}
-                <option value="{{ history.query }}">{{ history.query }}</option>
-            {% endfor %}
-        </datalist>
-        <!-- カテゴリの選択 -->
-        <label for="category">カテゴリ:</label>
-        <select name="category" id="category">
-            <option value="">すべて</option>
-            {% for category in categories %}
-                <option value="{{ category.name }}" {% if request.GET.category == category.name %}selected{% endif %}>
-                    {{ category.name }}
-                </option>
-            {% endfor %}
-        </select>        
-        <!-- 価格範囲の入力 -->
-        <div>
-            <label for="min_price">最低価格:</label>
-            <input type="number" name="min_price" min="0" id="min_price" value="{{ request.GET.min_price }}">
-        </div>
-        <div>
-            <label for="max_price">最高価格:</label>
-            <input type="number" name="max_price" min="0" id="max_price" value="{{ request.GET.max_price }}">
-        </div>
-        <!-- 並び替えの選択 -->
-        <label for="sort">並び替え:</label>
-        <select name="sort" id="sort">
-            <option value="name" {% if request.GET.sort == "name" %}selected{% endif %}>名前順</option>
-            <option value="price_asc" {% if request.GET.sort == "price_asc" %}selected{% endif %}>価格が安い順</option>
-            <option value="price_desc" {% if request.GET.sort == "price_desc" %}selected{% endif %}>価格が高い順</option>
-        </select>        
-        <button type="submit" class="btn btn-primary btn-sm">検索</button>
-    </form>
-</div>
 
 <div class="container mt-5">
     <!-- 商品リスト -->

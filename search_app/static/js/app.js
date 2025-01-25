@@ -44,6 +44,29 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+document.addEventListener("DOMContentLoaded", function () {
+    const searchModal = document.getElementById("search-modal");
+    const openSearchModal = document.getElementById("openSearchModal");
+    const closeSearchModal = document.querySelector(".close-modal-btn");
+
+    // 検索ボタンをクリックしたとき
+    openSearchModal.addEventListener("click", function () {
+        searchModal.style.display = "flex";  // モーダルを表示
+    });
+
+    // モーダルの閉じるボタンをクリックしたとき
+    closeSearchModal.addEventListener("click", function () {
+        searchModal.style.display = "none";  // モーダルを非表示
+    });
+
+    // モーダルの外側をクリックしたとき
+    searchModal.addEventListener("click", function (e) {
+        if (e.target === searchModal) {
+            searchModal.style.display = "none";  // モーダルを非表示
+        }
+    });
+});
+
 document.addEventListener('click', function (e) {
     if (e.target.matches('.like-button')) {
         e.preventDefault();
