@@ -23,6 +23,12 @@ main {
 header {
   background-color: #dd8241;  /* 背景色 */
   padding: 10px 20px; /* ヘッダー内のパディング */
+  position: fixed;  /* 固定表示 */
+  top: 0;  /* 上部に固定 */
+  left: 0;  /* 左端に固定 */
+  width: 100%;  /* 幅を画面いっぱいに */
+  z-index: 1000; /* 他の要素の上に表示 */
+  box-sizing: border-box; /* パディングを含めたサイズ調整 */
 }
 
 /* header-innerのレイアウト調整 */
@@ -159,14 +165,14 @@ button {
 
 
 /* ログイン/登録フォーム */
-body.login-page, body.register-page {
+/* body.login-page, body.register-page {
   display: flex;
-  flex-direction: column;  /* 上から下に並べる */
-  justify-content: center;  /* 中央に配置 */
-  align-items: center;  /* 横方向にも中央に配置 */
-  min-height: 100vh; /* 最小高さ100vh */
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center;
+  min-height: 100vh; 
   margin: 0;
-}
+} */
 
 .login-box, .register-box {
   max-width: 400px;  /* フォームの最大幅 */
@@ -177,7 +183,20 @@ body.login-page, body.register-page {
   padding: 0 20px 20px 20px;
 }
 
+/* ログインページや新規登録ページのスタイル */
+body.login-page, body.register-page {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: flex-start;  上に揃える */
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding-top: 140px;  /* ヘッダーの高さ分、上に余白を追加 */
+}
+
+/* ヘッダーとコンテンツの間にマージンを追加 */
 .glass-container {
+  margin-top: 30px; /* ヘッダーとコンテンツの間に余白を追加 */
   width: 100%;
   max-width: 300px;
   padding: 20px;
@@ -191,6 +210,7 @@ body.login-page, body.register-page {
   background-clip: padding-box;
   backdrop-filter: blur(5px);
 }
+
 
 .login-box {
   width: 100%;
