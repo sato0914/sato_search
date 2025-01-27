@@ -67,6 +67,7 @@ header {
   width: 100%;
   height: 4px;
   background-color: white;
+  border-radius: 5px;
 }
 
 /* 検索ボタン */
@@ -165,14 +166,6 @@ button {
 
 
 /* ログイン/登録フォーム */
-/* body.login-page, body.register-page {
-  display: flex;
-  flex-direction: column;
-  justify-content: center; 
-  align-items: center;
-  min-height: 100vh; 
-  margin: 0;
-} */
 
 .login-box, .register-box {
   max-width: 400px;  /* フォームの最大幅 */
@@ -297,6 +290,38 @@ small {
   display: block;  /* 画像の余計な隙間を削除 */
   margin: 0 auto;
   border-radius: 10px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center; /* 横方向で中央揃え */
+  align-items: center; /* 縦方向で中央揃え（必要なら追加） */
+  margin-bottom: 20px;
+}
+
+.pagination .step-links {
+  display: flex;
+  gap: 10px; /* リンク間にスペースを追加 */
+  align-items: center; /* 必要に応じて縦方向の中央揃え */
+}
+
+.pagination a {
+  text-decoration: none; /* 下線を削除 */
+  padding: 5px 10px; /* リンクのクリック範囲を広げる */
+  border: 1px solid #ddd; /* 枠線を追加 */
+  border-radius: 5px; /* 角を丸くする */
+  color: #333; /* リンクの色 */
+  background-color: #e9e9e9; /* 背景色 */
+  transition: background-color 0.3s; /* ホバー時のアニメーション */
+}
+
+.pagination a:hover {
+  background-color: #dae0e6; /* ホバー時の背景色 */
+  border-color: #ccc; /* ホバー時の枠線色 */
+}
+
+.pagination span {
+  font-weight: bold; /* 現在のページ情報を目立たせる */
 }
 
 /* リストグループのスタイル */
