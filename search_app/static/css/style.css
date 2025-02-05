@@ -164,9 +164,7 @@ button {
   margin-top: 10px;  /* ボタンの上に余白 */
 }
 
-
 /* ログイン/登録フォーム */
-
 .login-box, .register-box {
   max-width: 400px;  /* フォームの最大幅 */
   width: 100%;
@@ -204,7 +202,6 @@ body.login-page, body.register-page {
   background-clip: padding-box;
   backdrop-filter: blur(5px);
 }
-
 
 .login-box {
   width: 100%;
@@ -353,12 +350,10 @@ small {
   margin-right: 5px;
   margin-top: 0;
 }
-
 .options a {
   color: #007bff;
   text-decoration: none;
 }
-
 .options a:hover {
   text-decoration: underline;
 }
@@ -427,5 +422,19 @@ body.login-box,body.register-box p{
   }
   .search-btn {
       margin-left: 0; /* 横並びの際は余分なマージンをなくす */
+  }
+  .container {
+    margin: 10px;
+  }
+}
+@media (max-width: 576px) {
+  .card {
+      width: 100%; /* スマホでは横幅を最大に */
+  }
+  .container {
+    margin: 10px;
+  }
+  textarea{
+    width: 256px;
   }
 }

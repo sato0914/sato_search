@@ -66,7 +66,7 @@ def product_delete(request, pk):
 
     if request.method == 'POST':
         product.delete()
-        return redirect('search.html')
+        return redirect('search_view')
     return render(request, 'product_confirm_delete.html', {'product': product})
 
 
