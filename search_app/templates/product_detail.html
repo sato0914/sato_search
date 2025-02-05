@@ -27,8 +27,8 @@
                 </p>
                 <!-- ボタンの配置 -->
                 <div class="d-flex justify-content-between mt-4">
-                    <a href="{% url 'product_update' product.pk %}" class="btn btn-secondary">編集</a>
-                    <a href="{% url 'product_delete' product.pk %}" class="btn btn-danger">削除</a>                  
+                    <a href="{% url 'product_update' pk=product.pk %}" class="btn btn-secondary">編集</a>
+                    <a href="{% url 'product_delete' pk=product.pk %}" class="btn btn-danger">削除</a>                  
                     <a href="{% url 'search_view' %}" class="btn btn-primary">検索画面へ戻る</a>
                 </div>
             </div>

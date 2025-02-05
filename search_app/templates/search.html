@@ -22,8 +22,8 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ product.name }}</h5>
                     <p class="card-text">{{ product.price|floatformat:0 }}円</p>
-                    <a href="{% url 'product_detail' product.id %}" class="btn btn-primary btn-sm">詳細</a>
-                    <a href="{% url 'product_delete' product.id %}" class="btn btn-danger btn-sm">削除</a>
+                    <a href="{% url 'product_detail' product_id=product.id %}" class="btn btn-primary btn-sm">詳細</a>
+                    <a href="{% url 'product_delete' pk=product.pk %}" class="btn btn-danger btn-sm">削除</a>
                     {% if request.user.is_authenticated %}
                         <form method="post" action="{% url 'toggle_like' product.id %}" style="display:inline;" id="like-form-{{ product.id }}">
                             {% csrf_token %}
@@ -60,7 +60,7 @@
             {% for product in related_products %}
                 <li class="list-group-item">
                     {{ product.name }} - {{ product.price|floatformat:0 }}円
-                    <a href="{% url 'product_detail' product.id %}" class="btn btn-info">詳細を見る</a>
+                    <a href="{% url 'product_detail' product_id=product.id %}" class="btn btn-info">詳細を見る</a>
                 </li>
             {% empty %}
                 <li class="list-group-item">おすすめの商品はありません。</li>
