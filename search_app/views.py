@@ -27,7 +27,7 @@ def product_create(request):
         form = ProductForm(request.POST, request.FILES)  # request.FILESを追加
         if form.is_valid():
             form.save()
-            return redirect('product_list')
+            return redirect('search.html')
     else:
         form = ProductForm()
     return render(request, 'product_form.html', {'form': form})
@@ -66,12 +66,9 @@ def product_delete(request, pk):
 
     if request.method == 'POST':
         product.delete()
-        return redirect('product_list')
+        return redirect('search.html')
     return render(request, 'product_confirm_delete.html', {'product': product})
 
-def product_list(request):
-    products = Product.objects.all()
-    return render(request, 'product_list.html', {'products': products})
 
 def filter_products(queryset, query, category_name, min_price, max_price):
     if query:
